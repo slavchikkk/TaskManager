@@ -29,4 +29,11 @@ public class User
         this.Name = name;
         this.Email = email;
     }
+
+    public User(string name) : this (0, name, string.Empty) { }
+
+    public static User GetDefaultUser()
+    {
+        return new User("Исполнитель не назначен");
+    }
 }
