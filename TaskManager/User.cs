@@ -2,6 +2,9 @@ namespace TaskManager;
 
 public class User
 {
+    //Поле для отслеживания ID
+    private static int NextId = 1;
+
     /// <summary>
     /// ИД пользователя
     /// </summary>
@@ -23,14 +26,15 @@ public class User
     /// <param name="id">ИД</param>
     /// <param name="name">Имя</param>
     /// <param name="email">Email</param>
-    public User(int id, string name, string email)
+    public User(string name, string email)
     {
-        this.Id = id;
+        this.Id = NextId;
+        NextId++;
         this.Name = name;
         this.Email = email;
     }
 
-    public User(string name) : this (0, name, string.Empty) { }
+    public User(string name) : this (name, string.Empty) { }
 
     public static User GetDefaultUser()
     {
