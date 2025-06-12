@@ -5,6 +5,11 @@ public class User
     //Поле для отслеживания ID
     private static int NextId = 1;
 
+    public static void SetNextId(int NewId)
+    {
+        NextId = NewId;
+    }
+
     /// <summary>
     /// ИД пользователя
     /// </summary>
@@ -28,8 +33,7 @@ public class User
     /// <param name="email">Email</param>
     public User(string name, string email)
     {
-        this.Id = NextId;
-        NextId++;
+        this.Id = NextId++;
         this.Name = name;
         this.Email = email;
     }

@@ -11,6 +11,11 @@ namespace TaskManager
         //Поле для отслеживания ID
         private static int NextId = 1;
 
+        public static void SetNextId(int NewId)
+        {
+            NextId = NewId;
+        }
+
         /// <summary>
         /// ИД задачи
         /// </summary>
@@ -57,8 +62,7 @@ namespace TaskManager
         /// <param name="Comment">Комментарии</param>
         public Task(string Name, string Description, DateTime Deadlines, string Priority, User? Executor = null, string Comment = "")
         {
-            this.Id = NextId;
-            NextId = NextId++;
+            this.Id = NextId++;
             this.Name = Name;
             this.Description = Description;
             this.Deadlines = Deadlines;
