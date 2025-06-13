@@ -24,51 +24,51 @@ namespace TaskManager
         /// <summary>
         /// Название задачи
         /// </summary>
-        public string Name { get; set; }
+        public string TaskName { get; set; }
 
         /// <summary>
         /// Описание задачи
         /// </summary>
-        public string Description { get; set; }
+        public string TaskDescription { get; set; }
 
         /// <summary>
         /// Сроки выполнения задачи
         /// </summary>
-        public DateTime Deadlines { get; set; }
+        public DateTime TaskDeadlines { get; set; }
 
         /// <summary>
         /// Приоритет задачи
         /// </summary>
-        public string Priority { get; set; }
+        public string TaskPriority { get; set; }
 
         /// <summary>
         /// Комментарий к задаче
         /// </summary>
-        public string Comment { get; set; }//Как вариант сделать коммент отдельным классом, с указанием автора, заголовком, 
+        public string TaskComment { get; set; }//Как вариант сделать коммент отдельным классом, с указанием автора, заголовком, 
 
         /// <summary>
         /// Исполнитель задачи
         /// </summary>
-        public User Executor { get; set; }
+        public User TaskExecutor { get; set; }
 
         /// <summary>
         /// Конструктор
         /// </summary>
-        /// <param name="Name">Имя</param>
-        /// <param name="Description">Описание</param>
-        /// <param name="Deadlines">Сроки</param>
-        /// <param name="Priority">Приоритет</param>
-        /// <param name="Executor">Исполнитель</param>
-        /// <param name="Comment">Комментарии</param>
-        public Task(string Name, string Description, DateTime Deadlines, string Priority, User? Executor = null, string Comment = "")
+        /// <param name="TaskName">Имя</param>
+        /// <param name="TaskDescription">Описание</param>
+        /// <param name="TaskDeadlines">Сроки</param>
+        /// <param name="TaskPriority">Приоритет</param>
+        /// <param name="TaskExecutor">Исполнитель</param>
+        /// <param name="TaskComment">Комментарии</param>
+        public Task(string TaskName, DateTime TaskDeadlines, string TaskPriority, string TaskDescription = "")
         {
             this.Id = NextId++;
-            this.Name = Name;
-            this.Description = Description;
-            this.Deadlines = Deadlines;
-            this.Priority = Priority;
-            this.Executor = Executor ?? User.GetDefaultUser();
-            this.Comment = Comment;
+            this.TaskName = TaskName;
+            this.TaskDescription = TaskDescription;
+            this.TaskDeadlines = TaskDeadlines;
+            this.TaskPriority = TaskPriority;
+            this.TaskExecutor = User.GetDefaultUser();
+            this.TaskComment = "";
         }
     }
 }
