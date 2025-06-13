@@ -60,15 +60,15 @@ namespace TaskManager
         /// <param name="Priority">Приоритет</param>
         /// <param name="Executor">Исполнитель</param>
         /// <param name="Comment">Комментарии</param>
-        public Task(string Name, string Description, DateTime Deadlines, string Priority, User? Executor = null, string Comment = "")
+        public Task(string Name, DateTime Deadlines, string Priority, string Description = "")
         {
             this.Id = NextId++;
             this.Name = Name;
             this.Description = Description;
             this.Deadlines = Deadlines;
             this.Priority = Priority;
-            this.Executor = Executor ?? User.GetDefaultUser();
-            this.Comment = Comment;
+            this.Executor = User.GetDefaultUser();
+            this.Comment = "";
         }
     }
 }
