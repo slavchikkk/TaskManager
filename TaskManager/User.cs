@@ -31,17 +31,17 @@ public class User
     /// <param name="id">ИД</param>
     /// <param name="name">Имя</param>
     /// <param name="email">Email</param>
-    public User(int id, string name, string email)
+    public User(string name, string email)
     {
         this.Id = NextId++;
         this.Name = name;
         this.Email = email;
     }
 
-    public User(string name) : this (0, name, string.Empty) { }
+    public User(string name) : this (name, string.Empty) { }
 
     public static User GetDefaultUser()
     {
-        return new User("Исполнитель не назначен");
+        return new User("Исполнитель не назначен", string.Empty);
     }
 }
