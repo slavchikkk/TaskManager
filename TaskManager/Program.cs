@@ -32,7 +32,6 @@ namespace TaskManager
         // Показываем главное меню
         static void ShowMenu()
         {
-            Console.Clear();
             Console.WriteLine("\nСписок действий:");
             Console.WriteLine("1. Создать задачу");
             Console.WriteLine("2. Назначить ответственного");
@@ -40,7 +39,8 @@ namespace TaskManager
             Console.WriteLine("4. Добавить комментарий");
             Console.WriteLine("5. Отправить уведомление");
             Console.WriteLine("6. Генерация отчета");
-            Console.WriteLine("7. Выход");
+            Console.WriteLine("7. Создать пользователя");
+            Console.WriteLine("0. Выход");
         }
 
         // Выполняем выбранное действие
@@ -67,6 +67,9 @@ namespace TaskManager
                     GenerateReport();
                     break;
                 case 7:
+                    CreateUser();
+                    break;
+                case 0:
                     ExitApp();
                     break;
                 default:
@@ -105,11 +108,111 @@ namespace TaskManager
             Console.WriteLine("Задача успешно создана!");
         }
 
+        static void CreateUser()
+        {
+            Console.Write("Введите ФИО пользователя: ");
+            string userName = Console.ReadLine().Trim();
+            
+            if (string.IsNullOrEmpty(userName))
+            {
+                Console.WriteLine("Имя пользователя не может быть пустым.");
+                return;
+            } 
+                
+            Console.Write("Введите email пользователя: ");
+            string email = Console.ReadLine().Trim();
+
+            if (string.IsNullOrEmpty(email))
+            {
+                Console.WriteLine("Email пользователя не может быть пустым.");
+            }
+            
+            User newUser = new User(userName, email);
+            Users.Add(newUser);
+            Console.WriteLine("Пользователь успешно создан!");
+        }
+
         // Назначение исполнителя задачи
         static void AssignExecutor()
         {
-            Console.WriteLine("Назначение исполнителя надо реализовывать");
+            if (Tasks.Count == 0)
+            {
+                Console.WriteLine("Нет активных задач");
+                return;
+            }
+            
+            Task currentTask = GetUserInputTask();
+            User currentUser = GetUserInputUser();
+            
+            Tasks[currentTask.Id - 1].Executor = currentUser;
+            Console.WriteLine($"Ответственный {currentUser.Name} успешно назначен на задачу {currentTask.Name}");
         }
+        
+        /// <summary>
+        /// Получение ИД задачи от пользователя
+        /// </summary>
+        /// <returns>int</returns>
+        static Task GetUserInputTask()
+        {
+            Console.WriteLine("Укажите ИД задачи: ");
+            
+            // Выводим список задач для удобного ввода данных.
+            foreach (Task task in Tasks)
+            {
+                Console.WriteLine($"Наименование: {task.Name}, ИД: {task.Id}");
+            }
+            
+            if (int.TryParse(Console.ReadLine(), out int taskId))
+            {
+                // Проверяем что ИД задачи входит в список.
+                if (Tasks.Count >= taskId && taskId > 0)
+                {
+                    taskId -= 1; // вычитаем 1 чтобы получить позицию в листе.
+                    return Tasks[taskId];
+                }
+                else
+                {
+                    Console.WriteLine("Введен неверный ИД. Повторите попытку.");
+                    return GetUserInputTask();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Введен неверный ИД. Повторите попытку.");
+                return GetUserInputTask();
+            }
+        }
+
+        static User GetUserInputUser()
+        {
+            Console.WriteLine("Укажите ИД пользователя: ");
+            
+            // Выводим список пользователей для удобного ввода данных.
+            foreach (User user in Users)
+            {
+                Console.WriteLine($"Имя: {user.Name}, ИД: {user.Id}");
+            }
+            
+            if (int.TryParse(Console.ReadLine(), out int userId))
+            {
+                foreach (User user in Users)
+                {
+                    if (user.Id == userId)
+                    {
+                        return user;
+                    }
+                }
+                {
+                    Console.WriteLine("Введен неверный ИД. Повторите попытку.");
+                    return GetUserInputUser();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Введен неверный ИД. Повторите попытку.");
+                return GetUserInputUser();
+            }
+        }        
 
         // Отслеживаем прогресс задач
         static void TrackProgress()

@@ -38,7 +38,9 @@ public class User
         this.Email = email;
     }
 
-    public User(string name) : this (0, name, string.Empty) { }
+    public User(string name, string email) : this (0, name, email) { }
+    
+    public User(string name) : this(0, name, String.Empty) { }
 
     public static User GetDefaultUser()
     {
