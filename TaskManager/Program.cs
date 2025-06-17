@@ -217,7 +217,22 @@ namespace TaskManager
         // Отслеживаем прогресс задач
         static void TrackProgress()
         {
-            Console.WriteLine("Отслеживание прогресса надо реализовывать");
+            Task currentTask = GetUserInputTask();
+            switch (currentTask.Progress)
+            {
+                case TaskProgress.New:
+                    Console.WriteLine($"Статус задачи {currentTask.Name}: новая. Крайний срок {currentTask.Deadlines}");
+                    break;
+                case TaskProgress.InProgress:
+                    Console.WriteLine($"Статус задачи {currentTask.Name}: в работе. Крайний срок {currentTask.Deadlines}");
+                    break;
+                case TaskProgress.Completed:
+                    Console.WriteLine($"Статус задачи {currentTask.Name}: завершена. Крайний срок {currentTask.Deadlines}");
+                    break;
+                case TaskProgress.Cancelled:
+                    Console.WriteLine($"Статус задачи {currentTask.Name}: отменена. Крайний срок {currentTask.Deadlines}");
+                    break;
+            }
         }
 
         // Добавляем комментарии к задаче

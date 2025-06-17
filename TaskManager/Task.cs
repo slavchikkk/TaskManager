@@ -8,7 +8,7 @@ namespace TaskManager
 {
     public class Task
     {
-        //Поле для отслеживания ID
+        // Поле для отслеживания ID
         private static int NextId = 1;
 
         public static void SetNextId(int NewId)
@@ -44,12 +44,17 @@ namespace TaskManager
         /// <summary>
         /// Комментарий к задаче
         /// </summary>
-        public string Comment { get; set; }//Как вариант сделать коммент отдельным классом, с указанием автора, заголовком, 
+        public string Comment { get; set; }// Как вариант сделать коммент отдельным классом, с указанием автора, заголовком, 
 
         /// <summary>
         /// Исполнитель задачи
         /// </summary>
         public User Executor { get; set; }
+
+        /// <summary>
+        /// Прогресс(статус) задачи.
+        /// </summary>
+        public TaskProgress Progress { get; set; }
 
         /// <summary>
         /// Конструктор
@@ -69,6 +74,7 @@ namespace TaskManager
             this.Priority = Priority;
             this.Executor = User.GetDefaultUser();
             this.Comment = "";
+            this.Progress = TaskProgress.New;
         }
     }
 }
