@@ -33,7 +33,8 @@ public class User
     /// <param name="email">Email</param>
     public User(int id, string name, string email)
     {
-        this.Id = NextId++;
+        // this.Id = NextId++;
+        this.Id = id;
         this.Name = name;
         this.Email = email;
     }
@@ -45,5 +46,10 @@ public class User
     public static User GetDefaultUser()
     {
         return new User("Исполнитель не назначен");
+    }
+
+    public String ToDataString()
+    { 
+        return $"{Id}|{Name}|{Email}";
     }
 }

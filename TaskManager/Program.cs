@@ -107,7 +107,8 @@ namespace TaskManager
             Console.Write("Укажите приоритет задачи: ");
             string taskPriority = Console.ReadLine().Trim();
 
-            Task newTask = new Task(taskName, taskDeadline, taskPriority);
+            // TODO Исправить логику userId
+            Task newTask = new Task(1, taskName, taskDeadline, taskPriority);
             Tasks.Add(newTask);
             Console.WriteLine("Задача успешно создана!");
         }

@@ -65,9 +65,10 @@ namespace TaskManager
         /// <param name="Priority">Приоритет</param>
         /// <param name="Executor">Исполнитель</param>
         /// <param name="Comment">Комментарии</param>
-        public Task(string Name, DateTime Deadlines, string Priority, string Description = "")
+        public Task(int userId, string Name, DateTime Deadlines, string Priority, string Description = "")
         {
-            this.Id = NextId++;
+            // this.Id = NextId++;
+            this.Id = userId;
             this.Name = Name;
             this.Description = Description;
             this.Deadlines = Deadlines;
@@ -75,6 +76,11 @@ namespace TaskManager
             this.Executor = User.GetDefaultUser();
             this.Comment = "";
             this.Progress = TaskProgress.New;
+        }
+        
+        public string ToDataString()
+        {
+            return $"{Id}|{Name}|{Description}|{Deadlines}|{Priority}|{Executor}|{Comment}|{Progress}";
         }
     }
 }
