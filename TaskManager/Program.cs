@@ -40,6 +40,7 @@ namespace TaskManager
             Console.WriteLine("5. Отправить уведомление");
             Console.WriteLine("6. Генерация отчета");
             Console.WriteLine("7. Создать пользователя");
+            Console.WriteLine("8. Изменить статус задачи");
             Console.WriteLine("0. Выход");
         }
 
@@ -68,6 +69,9 @@ namespace TaskManager
                     break;
                 case 7:
                     CreateUser();
+                    break;
+                case 8:
+                    ChangeTaskStatus();
                     break;
                 case 0:
                     ExitApp();
@@ -106,6 +110,50 @@ namespace TaskManager
             Task newTask = new Task(taskName, taskDeadline, taskPriority);
             Tasks.Add(newTask);
             Console.WriteLine("Задача успешно создана!");
+        }
+
+        static void ChangeTaskStatus()
+        {
+            if (Tasks.Count == 0)
+            {
+                Console.WriteLine("Нет активных задач");
+                return;
+            }
+            
+            Task currentTask = GetUserInputTask();
+            TaskProgress status = GetUserInputTaskProgress();
+
+            string progress = "";
+            switch (status)
+            {
+                case TaskProgress.New:
+                    progress = "Новая";
+                    break;
+                case TaskProgress.InProgress:
+                    progress = "В работе";
+                    break;
+                case TaskProgress.Completed:
+                    progress = "Завершена";
+                    break;
+                case TaskProgress.Cancelled:
+                    progress = "Отменена";
+                    break;
+                
+            }
+            Console.WriteLine($"Статус задачи {currentTask.Name} изменен. Текущий статус: {progress}");
+
+            EmailService emailService = new EmailService("smtp.yandex.ru", 587, "m1knll@yandex.ru", "dpyczxyfvgllapoc");
+            List<string> emailList = new List<string>();
+            if (string.IsNullOrEmpty(currentTask.Executor.Email))
+            {
+                Console.WriteLine("Отправка письма невозможна. Незаполненна почта.");
+                return;
+            }
+            emailList.Add(currentTask.Executor.Email);
+
+            string subject = $"Изменения по задаче {currentTask.Id}";
+            string body = $"В задаче {currentTask.Id} изменился статус. Текущий статус: {progress}";
+            emailService.SendEmail(emailList, body, subject);
         }
 
         static void CreateUser()
@@ -212,7 +260,38 @@ namespace TaskManager
                 Console.WriteLine("Введен неверный ИД. Повторите попытку.");
                 return GetUserInputUser();
             }
-        }        
+        }
+
+        static TaskProgress GetUserInputTaskProgress()
+        {
+            Console.WriteLine("Выберете на какой статус поменять.");
+            Console.WriteLine("1. Новая.");
+            Console.WriteLine("2. В работе.");
+            Console.WriteLine("3. Завершено.");
+            Console.WriteLine("4. Отменено.");
+            
+            if (!int.TryParse(Console.ReadLine(), out int status))
+            {
+                Console.WriteLine("Ошибка! Введите корректное значение.");
+                return GetUserInputTaskProgress();
+            }
+
+            switch (status)
+            {
+                case 1:
+                    return TaskProgress.New;
+                case 2:
+                    return TaskProgress.InProgress;
+                case 3:
+                    return TaskProgress.Completed;
+                case 4:
+                    return TaskProgress.Cancelled;
+                default:
+                    Console.WriteLine("Ошибка! Введите корректное значение.");
+                    return GetUserInputTaskProgress();
+                    
+            }
+        }
 
         // Отслеживаем прогресс задач
         static void TrackProgress()
@@ -258,6 +337,8 @@ namespace TaskManager
         static void SendNotification()
         {
             Console.WriteLine("Отправку уведомлений надо реализовывать");
+            
+            
         }
 
         // Генерация отчета по задачам
