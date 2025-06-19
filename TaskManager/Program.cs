@@ -22,7 +22,7 @@ namespace TaskManager
                 try
                 {
                     var choice = int.Parse(Console.ReadLine());
-                    
+
                     ProcessChoice(choice);
                 }
                 catch (FormatException)
@@ -39,11 +39,11 @@ namespace TaskManager
             Console.WriteLine("1. Создать задачу");
             Console.WriteLine("2. Создать пользователя");
             Console.WriteLine("3. Назначить ответственного");
-            Console.WriteLine("4. Просмотреть прогресс");
-            Console.WriteLine("5. Добавить комментарий");
-            Console.WriteLine("6. Отфильтровать задачи");
-            Console.WriteLine("7. Генерация отчета");
-            Console.WriteLine("8. Изменить статус задачи");
+            Console.WriteLine("4. Добавить комментарий");
+            Console.WriteLine("5. Изменить статус задачи");
+            Console.WriteLine("6. Просмотреть прогресс");
+            Console.WriteLine("7. Отсортировать задачи");
+            Console.WriteLine("8. Генерация отчета");
             Console.WriteLine("0. Выход");
         }
 
@@ -62,19 +62,19 @@ namespace TaskManager
                     AssignExecutor();
                     break;
                 case 4:
-                    TrackProgress();
-                    break;
-                case 5:
                     AddComment();
                     break;
+                case 5:
+                    ChangeTaskStatus();
+                    break;
                 case 6:
-                    FilterTasks();
+                    TrackProgress();
                     break;
                 case 7:
-                    GenerateReport();
+                    FilterTasks();
                     break;
                 case 8:
-                    ChangeTaskStatus();
+                    GenerateReport();
                     break;
                 case 0:
                     ExitApp();
@@ -122,7 +122,7 @@ namespace TaskManager
                 Console.WriteLine("Нет активных задач");
                 return;
             }
-            
+
             Task currentTask = GetUserInputTask();
             TaskProgress status = GetUserInputTaskProgress();
 
@@ -141,7 +141,7 @@ namespace TaskManager
                 case TaskProgress.Cancelled:
                     progress = "Отменена";
                     break;
-                
+
             }
             Console.WriteLine($"Статус задачи {currentTask.Name} изменен. Текущий статус: {progress}");
 
@@ -163,13 +163,13 @@ namespace TaskManager
         {
             Console.Write("Введите ФИО пользователя: ");
             string userName = Console.ReadLine().Trim();
-            
+
             if (string.IsNullOrEmpty(userName))
             {
                 Console.WriteLine("Имя пользователя не может быть пустым.");
                 return;
-            } 
-                
+            }
+
             Console.Write("Введите email пользователя: ");
             string email = Console.ReadLine().Trim();
 
@@ -177,7 +177,7 @@ namespace TaskManager
             {
                 Console.WriteLine("Email пользователя не может быть пустым.");
             }
-            
+
             User newUser = new User(userName, email);
             Users.Add(newUser);
             Console.WriteLine("Пользователь успешно создан!");
@@ -191,27 +191,33 @@ namespace TaskManager
                 Console.WriteLine("Нет активных задач");
                 return;
             }
-            
+
+            if (Users.Count == 0)
+            {
+                Console.WriteLine("Нет активных пользователей");
+                return;
+            }
+
             Task currentTask = GetUserInputTask();
             User currentUser = GetUserInputUser();
-            
+
             Tasks[currentTask.Id - 1].Executor = currentUser;
             Console.WriteLine($"Ответственный {currentUser.Name} успешно назначен на задачу {currentTask.Name}");
         }
-        
+
 
         // Получение ИД задачи от пользователя
 
         static Task GetUserInputTask()
         {
             Console.WriteLine("Укажите ИД задачи: ");
-            
+
             // Выводим список задач для удобного ввода данных.
             foreach (Task task in Tasks)
             {
                 Console.WriteLine($"Наименование: {task.Name}, ИД: {task.Id}");
             }
-            
+
             if (int.TryParse(Console.ReadLine(), out int taskId))
             {
                 // Проверяем что ИД задачи входит в список.
@@ -236,13 +242,13 @@ namespace TaskManager
         static User GetUserInputUser()
         {
             Console.WriteLine("Укажите ИД пользователя: ");
-            
+
             // Выводим список пользователей для удобного ввода данных.
             foreach (User user in Users)
             {
                 Console.WriteLine($"Имя: {user.Name}, ИД: {user.Id}");
             }
-            
+
             if (int.TryParse(Console.ReadLine(), out int userId))
             {
                 foreach (User user in Users)
@@ -271,7 +277,7 @@ namespace TaskManager
             Console.WriteLine("2. В работе.");
             Console.WriteLine("3. Завершено.");
             Console.WriteLine("4. Отменено.");
-            
+
             if (!int.TryParse(Console.ReadLine(), out int status))
             {
                 Console.WriteLine("Ошибка! Введите корректное значение.");
@@ -291,7 +297,7 @@ namespace TaskManager
                 default:
                     Console.WriteLine("Ошибка! Введите корректное значение.");
                     return GetUserInputTaskProgress();
-                    
+
             }
         }
 
@@ -348,7 +354,7 @@ namespace TaskManager
         }
 
 
-        // Фильтрация задач
+        // Сортировка задач
 
         static void FilterTasks()
         {
@@ -358,7 +364,7 @@ namespace TaskManager
                 return;
             }
 
-            Console.WriteLine("\nФильтрация задач:");
+            Console.WriteLine("\nОтсортировать задачи:");
             Console.WriteLine("1. По номеру");
             Console.WriteLine("2. По сроку");
             Console.WriteLine("3. По приоритету");
@@ -380,7 +386,7 @@ namespace TaskManager
                         FilterPriority();
                         break;
                     default:
-                        Console.WriteLine("Неправильный выбор фильтра");
+                        Console.WriteLine("Неправильный выбор критерия сортировки");
                         break;
                 }
             }
