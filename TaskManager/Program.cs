@@ -41,7 +41,7 @@ namespace TaskManager
             Console.WriteLine("3. Назначить ответственного");
             Console.WriteLine("4. Просмотреть прогресс");
             Console.WriteLine("5. Добавить комментарий");
-            Console.WriteLine("6. Отфильтровать задачи");
+            Console.WriteLine("6. Отсортировать задачи");
             Console.WriteLine("7. Генерация отчета");
             Console.WriteLine("8. Изменить статус задачи");
             Console.WriteLine("0. Выход");
@@ -348,7 +348,7 @@ namespace TaskManager
         }
 
 
-        // Фильтрация задач
+        // Сортировка задач
 
         static void FilterTasks()
         {
@@ -358,7 +358,7 @@ namespace TaskManager
                 return;
             }
 
-            Console.WriteLine("\nФильтрация задач:");
+            Console.WriteLine("\nОтсортировать задачи:");
             Console.WriteLine("1. По номеру");
             Console.WriteLine("2. По сроку");
             Console.WriteLine("3. По приоритету");
@@ -380,7 +380,7 @@ namespace TaskManager
                         FilterPriority();
                         break;
                     default:
-                        Console.WriteLine("Неправильный выбор фильтра");
+                        Console.WriteLine("Неправильный выбор критерия сортировки");
                         break;
                 }
             }
