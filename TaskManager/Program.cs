@@ -196,7 +196,7 @@ namespace TaskManager
                 return;
             }
 
-            if (Users.Count == 0)
+            if (userStorage.GetUsers().Count == 0)
             {
                 Console.WriteLine("Нет активных пользователей");
                 return;
@@ -310,7 +310,7 @@ namespace TaskManager
         // Отслеживаем прогресс задач
         static void TrackProgress()
         {
-            if (Tasks.Count == 0)
+            if (taskStorage.GetTasks().Count == 0)
             {
                 Console.WriteLine("Нет активных задач");
                 return;
@@ -337,7 +337,7 @@ namespace TaskManager
         // Добавляем комментарии к задаче
         static void AddComment()
         {
-            if (Tasks.Count == 0)
+            if (taskStorage.GetTasks().Count == 0)
             {
                 Console.WriteLine("Нет активных задач");
                 return;
@@ -364,7 +364,7 @@ namespace TaskManager
 
         static void FilterTasks()
         {
-            if (Tasks.Count == 0)
+            if (taskStorage.GetTasks().Count == 0)
             {
                 Console.WriteLine("Нет активных задач");
                 return;
@@ -404,19 +404,19 @@ namespace TaskManager
 
         static void FilterId()
         {
-            IEnumerable<Task> sortedTasks = Tasks.OrderBy(t => t.Id);
+            IEnumerable<Task> sortedTasks = taskStorage.GetTasks().OrderBy(t => t.Id);
             DisplaySortedList(sortedTasks);
         }
 
         static void FilterDeadline()
         {
-            IEnumerable<Task> sortedTasks = Tasks.OrderBy(t => t.Deadlines);
+            IEnumerable<Task> sortedTasks = taskStorage.GetTasks().OrderBy(t => t.Deadlines);
             DisplaySortedList(sortedTasks);
         }
 
         static void FilterPriority()
         {
-            IEnumerable<Task> sortedTasks = Tasks.OrderBy(t => t.Priority);
+            IEnumerable<Task> sortedTasks = taskStorage.GetTasks().OrderBy(t => t.Priority);
             DisplaySortedList(sortedTasks);
         }
 
