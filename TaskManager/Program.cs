@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TaskManager
 {
@@ -20,6 +22,7 @@ namespace TaskManager
                 try
                 {
                     var choice = int.Parse(Console.ReadLine());
+                    
                     ProcessChoice(choice);
                 }
                 catch (FormatException)
@@ -34,12 +37,12 @@ namespace TaskManager
         {
             Console.WriteLine("\nСписок действий:");
             Console.WriteLine("1. Создать задачу");
-            Console.WriteLine("2. Назначить ответственного");
-            Console.WriteLine("3. Просмотреть прогресс");
-            Console.WriteLine("4. Добавить комментарий");
-            Console.WriteLine("5. Отправить уведомление");
-            Console.WriteLine("6. Генерация отчета");
-            Console.WriteLine("7. Создать пользователя");
+            Console.WriteLine("2. Создать пользователя");
+            Console.WriteLine("3. Назначить ответственного");
+            Console.WriteLine("4. Просмотреть прогресс");
+            Console.WriteLine("5. Добавить комментарий");
+            Console.WriteLine("6. Отфильтровать задачи");
+            Console.WriteLine("7. Генерация отчета");
             Console.WriteLine("8. Изменить статус задачи");
             Console.WriteLine("0. Выход");
         }
@@ -53,22 +56,22 @@ namespace TaskManager
                     CreateTask();
                     break;
                 case 2:
-                    AssignExecutor();
+                    CreateUser();
                     break;
                 case 3:
-                    TrackProgress();
+                    AssignExecutor();
                     break;
                 case 4:
-                    AddComment();
+                    TrackProgress();
                     break;
                 case 5:
-                    SendNotification();
+                    AddComment();
                     break;
                 case 6:
-                    GenerateReport();
+                    FilterTasks();
                     break;
                 case 7:
-                    CreateUser();
+                    GenerateReport();
                     break;
                 case 8:
                     ChangeTaskStatus();
@@ -196,10 +199,9 @@ namespace TaskManager
             Console.WriteLine($"Ответственный {currentUser.Name} успешно назначен на задачу {currentTask.Name}");
         }
         
-        /// <summary>
-        /// Получение ИД задачи от пользователя
-        /// </summary>
-        /// <returns>int</returns>
+
+        // Получение ИД задачи от пользователя
+
         static Task GetUserInputTask()
         {
             Console.WriteLine("Укажите ИД задачи: ");
@@ -296,6 +298,12 @@ namespace TaskManager
         // Отслеживаем прогресс задач
         static void TrackProgress()
         {
+            if (Tasks.Count == 0)
+            {
+                Console.WriteLine("Нет активных задач");
+                return;
+            }
+
             Task currentTask = GetUserInputTask();
             switch (currentTask.Progress)
             {
@@ -317,6 +325,12 @@ namespace TaskManager
         // Добавляем комментарии к задаче
         static void AddComment()
         {
+            if (Tasks.Count == 0)
+            {
+                Console.WriteLine("Нет активных задач");
+                return;
+            }
+
             Console.Write("Выберите номер задачи для комментирования: ");
             int taskIndex = int.Parse(Console.ReadLine()) - 1;
 
@@ -333,19 +347,83 @@ namespace TaskManager
             }
         }
 
-        // Отправка уведомлений исполнителям
-        static void SendNotification()
+
+        // Фильтрация задач
+
+        static void FilterTasks()
         {
-            Console.WriteLine("Отправку уведомлений надо реализовывать");
-            
-            
+            if (Tasks.Count == 0)
+            {
+                Console.WriteLine("Нет активных задач");
+                return;
+            }
+
+            Console.WriteLine("\nФильтрация задач:");
+            Console.WriteLine("1. По номеру");
+            Console.WriteLine("2. По сроку");
+            Console.WriteLine("3. По приоритету");
+            Console.Write("Выберите критерий: ");
+
+            try
+            {
+                int filternumber = int.Parse(Console.ReadLine());
+
+                switch (filternumber)
+                {
+                    case 1:
+                        FilterId();
+                        break;
+                    case 2:
+                        FilterDeadline();
+                        break;
+                    case 3:
+                        FilterPriority();
+                        break;
+                    default:
+                        Console.WriteLine("Неправильный выбор фильтра");
+                        break;
+                }
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Ошибка: введено недопустимое значение");
+            }
         }
+
+        static void FilterId()
+        {
+            IEnumerable<Task> sortedTasks = Tasks.OrderBy(t => t.Id);
+            DisplaySortedList(sortedTasks);
+        }
+
+        static void FilterDeadline()
+        {
+            IEnumerable<Task> sortedTasks = Tasks.OrderBy(t => t.Deadlines);
+            DisplaySortedList(sortedTasks);
+        }
+
+        static void FilterPriority()
+        {
+            IEnumerable<Task> sortedTasks = Tasks.OrderBy(t => t.Priority);
+            DisplaySortedList(sortedTasks);
+        }
+
+        static void DisplaySortedList(IEnumerable<Task> TasksToDisplay)
+        {
+            foreach (var task in TasksToDisplay)
+            {
+                Console.WriteLine($"#{task.Id}. Название: {task.Name}, Срок: {task.Deadlines.ToString("yyyy-MM-dd")}, Приоритет: {task.Priority}");
+            }
+        }
+
+
 
         // Генерация отчета по задачам
         static void GenerateReport()
         {
             Console.WriteLine("Отчет надо реализовывать");
         }
+
 
         // Завершение программы
         static void ExitApp()
