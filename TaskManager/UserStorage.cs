@@ -21,6 +21,11 @@ public class UserStorage
         return instance;
     }
 
+    public List<User> GetUsers()
+    {
+        return users;
+    }
+
     public void AddUser(User user)
     {
         if (IsEmailUsed(user.Email)) return;

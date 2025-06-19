@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace TaskManager;
 
 /// <summary>
@@ -25,7 +27,7 @@ public class TaskStorage
     {
         task.Id = GetNextId();
         tasks.Add(task);
-        File.AppendAllText(FilePath, task.ToDataString() + Environment.NewLine);
+        File.AppendAllText(FilePath, SerializeData(task) + Environment.NewLine);
     }
     
     private void CreateIfNotExistsFile()
@@ -46,21 +48,33 @@ public class TaskStorage
         {
             tasks = File.ReadAllLines(FilePath)
                 .Where(line => !string.IsNullOrWhiteSpace(line))
-                .Select(FromDataString)
+                .Select(DeserializeTask)
                 .ToList();
         }
     }
     
-    private int GetNextId()
+    public int GetNextId()
     {
         return tasks.Count + 1;
     }
-    
-    public static Task FromDataString(string data)
+
+    public List<Task> GetTasks()
     {
-        var splittedStrings = data.Split('|');
-        DateTime deadLine;
-        DateTime.TryParseExact(splittedStrings[2], "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out deadLine);
-        return new Task(int.Parse(splittedStrings[0]), splittedStrings[1], deadLine, splittedStrings[3], splittedStrings[4]);
+        return tasks;
+    }
+    
+    public static string SerializeData(Task task)
+    {
+        return JsonSerializer.Serialize(task);
+    }
+
+    public static Task DeserializeTask(string serializedTask)
+    {
+        return JsonSerializer.Deserialize<Task>(serializedTask);
+    }
+
+    public void SaveAllToFile()
+    {
+        File.WriteAllLines(FilePath, tasks.Select(task => SerializeData(task) + Environment.NewLine));
     }
 }
