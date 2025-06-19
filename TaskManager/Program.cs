@@ -9,9 +9,11 @@ namespace TaskManager
     class Program
     {
         // Глобальные списки задач и пользователей
-        static List<Task> Tasks = new List<Task>();
-        static List<User> Users = new List<User>();
-
+        // static List<Task> Tasks = new List<Task>();
+        // static List<User> Users = new List<User>();
+        static UserStorage userStorage = UserStorage.getInstance();
+        static TaskStorage taskStorage = TaskStorage.getInstance();
+        
         static void Main(string[] args)
         {
             // Основная логика программы
@@ -109,15 +111,16 @@ namespace TaskManager
 
             Console.Write("Укажите приоритет задачи: ");
             string taskPriority = Console.ReadLine().Trim();
-
-            Task newTask = new Task(taskName, taskDeadline, taskPriority);
-            Tasks.Add(newTask);
+            
+            Task newTask = new Task(taskStorage.GetNextId(), taskName, taskDeadline, taskPriority);
+            // Tasks.Add(newTask);
+            taskStorage.AddTask(newTask);
             Console.WriteLine("Задача успешно создана!");
         }
-
+        
         static void ChangeTaskStatus()
         {
-            if (Tasks.Count == 0)
+            if (taskStorage.GetTasks().Count == 0)
             {
                 Console.WriteLine("Нет активных задач");
                 return;
@@ -179,14 +182,15 @@ namespace TaskManager
             }
 
             User newUser = new User(userName, email);
-            Users.Add(newUser);
+            // Users.Add(newUser);
+            userStorage.AddUser(newUser);
             Console.WriteLine("Пользователь успешно создан!");
         }
 
         // Назначение исполнителя задачи
         static void AssignExecutor()
         {
-            if (Tasks.Count == 0)
+            if (taskStorage.GetTasks().Count == 0)
             {
                 Console.WriteLine("Нет активных задач");
                 return;
@@ -201,7 +205,9 @@ namespace TaskManager
             Task currentTask = GetUserInputTask();
             User currentUser = GetUserInputUser();
 
-            Tasks[currentTask.Id - 1].Executor = currentUser;
+            
+            taskStorage.GetTasks()[currentTask.Id - 1].Executor = currentUser;
+          
             Console.WriteLine($"Ответственный {currentUser.Name} успешно назначен на задачу {currentTask.Name}");
         }
 
@@ -213,7 +219,7 @@ namespace TaskManager
             Console.WriteLine("Укажите ИД задачи: ");
 
             // Выводим список задач для удобного ввода данных.
-            foreach (Task task in Tasks)
+            foreach (Task task in taskStorage.GetTasks())
             {
                 Console.WriteLine($"Наименование: {task.Name}, ИД: {task.Id}");
             }
@@ -221,10 +227,10 @@ namespace TaskManager
             if (int.TryParse(Console.ReadLine(), out int taskId))
             {
                 // Проверяем что ИД задачи входит в список.
-                if (Tasks.Count >= taskId && taskId > 0)
+                if (taskStorage.GetTasks().Count >= taskId && taskId > 0)
                 {
                     taskId -= 1; // вычитаем 1 чтобы получить позицию в листе.
-                    return Tasks[taskId];
+                    return taskStorage.GetTasks()[taskId];
                 }
                 else
                 {
@@ -244,14 +250,14 @@ namespace TaskManager
             Console.WriteLine("Укажите ИД пользователя: ");
 
             // Выводим список пользователей для удобного ввода данных.
-            foreach (User user in Users)
+            foreach (User user in userStorage.GetUsers())
             {
                 Console.WriteLine($"Имя: {user.Name}, ИД: {user.Id}");
             }
 
             if (int.TryParse(Console.ReadLine(), out int userId))
             {
-                foreach (User user in Users)
+                foreach (User user in userStorage.GetUsers())
                 {
                     if (user.Id == userId)
                     {
@@ -340,11 +346,11 @@ namespace TaskManager
             Console.Write("Выберите номер задачи для комментирования: ");
             int taskIndex = int.Parse(Console.ReadLine()) - 1;
 
-            if (taskIndex >= 0 && taskIndex < Tasks.Count)
+            if (taskIndex >= 0 && taskIndex < taskStorage.GetTasks().Count)
             {
                 Console.Write("Ваш комментарий: ");
                 string comment = Console.ReadLine();
-                Tasks[taskIndex].Comment = comment;
+                taskStorage.GetTasks()[taskIndex].Comment = comment;
                 Console.WriteLine("Комментарий добавлен успешно!");
             }
             else
@@ -434,6 +440,7 @@ namespace TaskManager
         // Завершение программы
         static void ExitApp()
         {
+            taskStorage.SaveAllToFile();
             Environment.Exit(0);
         }
     }

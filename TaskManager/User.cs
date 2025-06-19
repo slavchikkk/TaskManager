@@ -1,14 +1,16 @@
+using System.Text.Json.Serialization;
+
 namespace TaskManager;
 
 public class User
 {
     //Поле для отслеживания ID
-    private static int NextId = 1;
-
-    public static void SetNextId(int NewId)
-    {
-        NextId = NewId;
-    }
+    // private static int NextId = 1;
+    //
+    // public static void SetNextId(int NewId)
+    // {
+    //     NextId = NewId;
+    // }
 
     /// <summary>
     /// ИД пользователя
@@ -31,9 +33,11 @@ public class User
     /// <param name="id">ИД</param>
     /// <param name="name">Имя</param>
     /// <param name="email">Email</param>
+    [JsonConstructor]
     public User(int id, string name, string email)
     {
-        this.Id = NextId++;
+        // this.Id = NextId++;
+        this.Id = id;
         this.Name = name;
         this.Email = email;
     }
@@ -45,5 +49,10 @@ public class User
     public static User GetDefaultUser()
     {
         return new User("Исполнитель не назначен");
+    }
+
+    public String ToDataString()
+    { 
+        return $"{Id}|{Name}|{Email}";
     }
 }

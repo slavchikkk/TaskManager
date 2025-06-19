@@ -8,14 +8,6 @@ namespace TaskManager
 {
     public class Task
     {
-        // Поле для отслеживания ID
-        private static int NextId = 1;
-
-        public static void SetNextId(int NewId)
-        {
-            NextId = NewId;
-        }
-
         /// <summary>
         /// ИД задачи
         /// </summary>
@@ -44,7 +36,7 @@ namespace TaskManager
         /// <summary>
         /// Комментарий к задаче
         /// </summary>
-        public string Comment { get; set; }// Как вариант сделать коммент отдельным классом, с указанием автора, заголовком, 
+        public string Comment { get; set; }
 
         /// <summary>
         /// Исполнитель задачи
@@ -52,10 +44,25 @@ namespace TaskManager
         public User Executor { get; set; }
 
         /// <summary>
-        /// Прогресс(статус) задачи.
+        /// Прогресс (статус) задачи
         /// </summary>
         public TaskProgress Progress { get; set; }
 
+        /// <summary>
+        /// Пустой конструктор для JSON-десериализации
+        /// </summary>
+        public Task()
+        {
+            Id = 0;
+            Name = string.Empty;
+            Description = string.Empty;
+            Deadlines = DateTime.Now;
+            Priority = "Normal";
+            Comment = string.Empty;
+            Executor = User.GetDefaultUser();
+            Progress = TaskProgress.New;
+        }
+        
         /// <summary>
         /// Конструктор
         /// </summary>
@@ -65,16 +72,16 @@ namespace TaskManager
         /// <param name="Priority">Приоритет</param>
         /// <param name="Executor">Исполнитель</param>
         /// <param name="Comment">Комментарии</param>
-        public Task(string Name, DateTime Deadlines, string Priority, string Description = "")
+        public Task(int id, string name, DateTime deadlines, string priority, string description = "", string comment = "", User executor = null, TaskProgress progress = TaskProgress.New)
         {
-            this.Id = NextId++;
-            this.Name = Name;
-            this.Description = Description;
-            this.Deadlines = Deadlines;
-            this.Priority = Priority;
-            this.Executor = User.GetDefaultUser();
-            this.Comment = "";
-            this.Progress = TaskProgress.New;
+            Id = id;
+            Name = name;
+            Description = description;
+            Deadlines = deadlines;
+            Priority = priority;
+            Comment = comment;
+            Executor = executor ?? User.GetDefaultUser();
+            Progress = progress;
         }
     }
 }
