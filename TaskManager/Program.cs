@@ -39,11 +39,11 @@ namespace TaskManager
             Console.WriteLine("1. Создать задачу");
             Console.WriteLine("2. Создать пользователя");
             Console.WriteLine("3. Назначить ответственного");
-            Console.WriteLine("4. Просмотреть прогресс");
-            Console.WriteLine("5. Добавить комментарий");
-            Console.WriteLine("6. Отсортировать задачи");
-            Console.WriteLine("7. Генерация отчета");
-            Console.WriteLine("8. Изменить статус задачи");
+            Console.WriteLine("4. Добавить комментарий");
+            Console.WriteLine("5. Изменить статус задачи");
+            Console.WriteLine("6. Просмотреть прогресс");
+            Console.WriteLine("7. Отсортировать задачи");
+            Console.WriteLine("8. Генерация отчета");
             Console.WriteLine("0. Выход");
         }
 
@@ -62,19 +62,19 @@ namespace TaskManager
                     AssignExecutor();
                     break;
                 case 4:
-                    TrackProgress();
-                    break;
-                case 5:
                     AddComment();
                     break;
+                case 5:
+                    ChangeTaskStatus();
+                    break;
                 case 6:
-                    FilterTasks();
+                    TrackProgress();
                     break;
                 case 7:
-                    GenerateReport();
+                    FilterTasks();
                     break;
                 case 8:
-                    ChangeTaskStatus();
+                    GenerateReport();
                     break;
                 case 0:
                     ExitApp();
