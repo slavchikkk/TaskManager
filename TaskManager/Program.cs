@@ -46,6 +46,8 @@ namespace TaskManager
             Console.WriteLine("6. Просмотреть прогресс");
             Console.WriteLine("7. Отсортировать задачи");
             Console.WriteLine("8. Генерация отчета");
+            Console.WriteLine("9. Добавить наблюдателя к задаче");
+            Console.WriteLine("10. Убрать наблюдателя из задачи");
             Console.WriteLine("0. Выход");
         }
 
@@ -77,6 +79,12 @@ namespace TaskManager
                     break;
                 case 8:
                     GenerateReport();
+                    break;
+                case 9:
+                    AddSpectatorInTask();
+                    break;
+                case 10:
+                    DeleteSpectatorFromTask();
                     break;
                 case 0:
                     ExitApp();
@@ -148,18 +156,102 @@ namespace TaskManager
             }
             Console.WriteLine($"Статус задачи {currentTask.Name} изменен. Текущий статус: {progress}");
 
-            EmailService emailService = new EmailService("smtp.yandex.ru", 587, "m1knll@yandex.ru", "dpyczxyfvgllapoc");
+            EmailService emailService = new EmailService("smtp.yandex.ru", 587, "m1knll@yandex.ru", "kqsncbjurngfscnl");
             List<string> emailList = new List<string>();
-            if (string.IsNullOrEmpty(currentTask.Executor.Email))
+
+            if (currentTask.Spectators == null)
             {
-                Console.WriteLine("Отправка письма невозможна. Незаполненна почта.");
-                return;
+                currentTask.Spectators = new List<User>();
             }
-            emailList.Add(currentTask.Executor.Email);
+            
+            // Проходим по списку наблюдателей
+            foreach (var user in currentTask.Spectators)
+            {
+                // если почта заполнена - добавляем в список
+                if (!string.IsNullOrEmpty(user.Email))
+                {
+                    emailList.Add(user.Email);        
+                }
+            }
+            // если у исполнителя заполнена почта - добавляем в список
+            if (!string.IsNullOrEmpty(currentTask.Executor.Email))
+            {
+                emailList.Add(currentTask.Executor.Email);
+            }
 
             string subject = $"Изменения по задаче {currentTask.Id}";
             string body = $"В задаче {currentTask.Id} изменился статус. Текущий статус: {progress}";
             emailService.SendEmail(emailList, body, subject);
+        }
+
+        static void AddSpectatorInTask()
+        {
+            Console.WriteLine("В какую задачу хотите добавить наблюдателя?");
+            Task currentTask = GetUserInputTask();
+
+            Console.WriteLine("Кого добавить в задачу?");
+            User currentUser = GetUserInputUser();
+
+            if (currentUser.Id == currentTask.Executor.Id)
+            {
+                Console.WriteLine("Нельзя добавить исполнителя в наблюдатели. Повторите попытку.");
+                return;
+            }
+            
+            if (currentTask.Spectators == null)
+            {
+                currentTask.Spectators = new List<User>();
+            }
+            
+            if (currentTask.Spectators.Any(user => user.Id == currentUser.Id))
+            {
+                Console.WriteLine("Наблюдатель уже добавлен в задачу. Повторите попытку.");
+                return;
+            }
+
+        currentTask.Spectators.Add(currentUser);
+        }
+
+        static void DeleteSpectatorFromTask()
+        {
+            Console.WriteLine("Откуда хотите удалить наблюдателя?");
+            Task currentTask = GetUserInputTask();
+            
+            int answer = 0;
+            while (true)
+            {
+                if (currentTask.Spectators == null || currentTask.Spectators.Count == 0)
+                {
+                    Console.WriteLine("Наблюдателей нет.");
+                    return;
+                }
+                
+                Console.WriteLine("Введите ИД пользователя");
+                
+                // Проходим по списку наблюдателей и выводим их
+                foreach (var currentTaskSpectator in currentTask.Spectators)
+                {
+                    Console.WriteLine($"ИД: {currentTaskSpectator.Id}. Имя: {currentTaskSpectator.Name}");
+                }
+                // Получаем ИД наблюдателя
+                if (int.TryParse(Console.ReadLine(), out answer))
+                {
+                    // Проверяем есть ли он в списке
+                    if (currentTask.Spectators.Any(spectator => spectator.Id == answer))
+                    {
+                        // Удаляем
+                        currentTask.Spectators.Remove(currentTask.Spectators.First(sp => sp.Id == answer));
+                        Console.WriteLine($"Пользователь с ИД {answer} удален из наблюдателей.");
+                        return;
+                    }
+
+                    Console.WriteLine("Данного ИД в списке нет. Повторите попытку.");
+                    return;
+                }
+
+                Console.WriteLine("Ошибка. Повторите попытку.");
+                return;
+            }
         }
 
         static void CreateUser()
@@ -212,7 +304,7 @@ namespace TaskManager
         }
 
 
-        // Получение ИД задачи от пользователя
+        // Получение Task от пользователя
 
         static Task GetUserInputTask()
         {
@@ -244,7 +336,8 @@ namespace TaskManager
                 return GetUserInputTask();
             }
         }
-
+        
+        // Получение User от пользователя
         static User GetUserInputUser()
         {
             Console.WriteLine("Укажите ИД пользователя: ");
@@ -275,7 +368,7 @@ namespace TaskManager
                 return GetUserInputUser();
             }
         }
-
+        
         static TaskProgress GetUserInputTaskProgress()
         {
             Console.WriteLine("Выберете на какой статус поменять.");
