@@ -158,6 +158,11 @@ namespace TaskManager
 
             EmailService emailService = new EmailService("smtp.yandex.ru", 587, "m1knll@yandex.ru", "kqsncbjurngfscnl");
             List<string> emailList = new List<string>();
+
+            if (currentTask.Spectators == null)
+            {
+                currentTask.Spectators = new List<User>();
+            }
             
             // Проходим по списку наблюдателей
             foreach (var user in currentTask.Spectators)
@@ -187,23 +192,66 @@ namespace TaskManager
             Console.WriteLine("Кого добавить в задачу?");
             User currentUser = GetUserInputUser();
 
-            if (currentTask == null)
+            if (currentUser.Id == currentTask.Executor.Id)
             {
-                Console.WriteLine("task null");
+                Console.WriteLine("Нельзя добавить исполнителя в наблюдатели. Повторите попытку.");
+                return;
             }
-
-            if (currentUser == null)
+            
+            if (currentTask.Spectators == null)
             {
-                Console.WriteLine("user null");
+                currentTask.Spectators = new List<User>();
+            }
+            
+            if (currentTask.Spectators.Any(user => user.Id == currentUser.Id))
+            {
+                Console.WriteLine("Наблюдатель уже добавлен в задачу. Повторите попытку.");
+                return;
             }
 
         currentTask.Spectators.Add(currentUser);
-            
         }
 
         static void DeleteSpectatorFromTask()
         {
+            Console.WriteLine("Откуда хотите удалить наблюдателя?");
+            Task currentTask = GetUserInputTask();
             
+            int answer = 0;
+            while (true)
+            {
+                if (currentTask.Spectators == null || currentTask.Spectators.Count == 0)
+                {
+                    Console.WriteLine("Наблюдателей нет.");
+                    return;
+                }
+                
+                Console.WriteLine("Введите ИД пользователя");
+                
+                // Проходим по списку наблюдателей и выводим их
+                foreach (var currentTaskSpectator in currentTask.Spectators)
+                {
+                    Console.WriteLine($"ИД: {currentTaskSpectator.Id}. Имя: {currentTaskSpectator.Name}");
+                }
+                // Получаем ИД наблюдателя
+                if (int.TryParse(Console.ReadLine(), out answer))
+                {
+                    // Проверяем есть ли он в списке
+                    if (currentTask.Spectators.Any(spectator => spectator.Id == answer))
+                    {
+                        // Удаляем
+                        currentTask.Spectators.Remove(currentTask.Spectators.First(sp => sp.Id == answer));
+                        Console.WriteLine($"Пользователь с ИД {answer} удален из наблюдателей.");
+                        return;
+                    }
+
+                    Console.WriteLine("Данного ИД в списке нет. Повторите попытку.");
+                    return;
+                }
+
+                Console.WriteLine("Ошибка. Повторите попытку.");
+                return;
+            }
         }
 
         static void CreateUser()
