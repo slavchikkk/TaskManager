@@ -42,6 +42,8 @@ namespace TaskManager
         /// Исполнитель задачи
         /// </summary>
         public User Executor { get; set; }
+        
+        public List<User> Spectators { get; set; }
 
         /// <summary>
         /// Прогресс (статус) задачи
@@ -61,6 +63,7 @@ namespace TaskManager
             Comment = string.Empty;
             Executor = User.GetDefaultUser();
             Progress = TaskProgress.New;
+            Spectators = new List<User>();
         }
         
         /// <summary>
