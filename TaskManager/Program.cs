@@ -434,6 +434,33 @@ namespace TaskManager
         static void GenerateReport()
         {
             Console.WriteLine("Отчет надо реализовывать");
+            Report reportManager = new Report();
+            
+            Console.WriteLine("1. Отчет по всем задачам.");
+            int userCounter = 2;
+            foreach (var user in userStorage.GetUsers())
+            {
+                Console.WriteLine(userCounter++ + ". Отчет по пользователю " + user.Name);
+            }
+
+            int chosenAction = int.Parse(Console.ReadLine());
+            while (chosenAction < 1 || chosenAction > userCounter - 1)
+            {
+                Console.WriteLine("Ошибка! Введите корректное значение.");
+                chosenAction = int.Parse(Console.ReadLine());
+            }
+            
+            Console.WriteLine("chosen action " + chosenAction);
+
+            if (chosenAction == 1)
+            {
+                reportManager.GenerateByAllTasks(taskStorage.GetTasks());
+            }
+            else
+            {
+                User reportUser = userStorage.GetUsers()[chosenAction - 2];
+                reportManager.GenerateByUser(taskStorage.GetTasks(), reportUser);
+            }
         }
 
 
